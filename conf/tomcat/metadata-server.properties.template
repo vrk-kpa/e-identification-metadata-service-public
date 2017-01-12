@@ -1,0 +1,6 @@
+# Metadata Server properties
+############################
+jdbc.db.url={{jdbc_db_url}}
+jdbc.username={{jdbc_username}}
+jdbc.password={{jdbc_password}}
+aar.base.url={{aar_base_url}}

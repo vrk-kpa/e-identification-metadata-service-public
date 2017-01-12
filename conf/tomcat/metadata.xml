@@ -1,0 +1,6 @@
+<!-- TOMCAT_HOME/conf/Catalina/localhost/metadata.xml -->
+<Context docBase="/opt/metadata-server/kapa-metadata-server.war"
+         privileged="true"
+         antiResourceLocking="false"
+         unpackWAR="true"
+         swallowOutput="true" />
