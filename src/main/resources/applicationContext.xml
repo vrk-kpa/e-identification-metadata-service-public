@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The MIT License
+    Copyright (c) 2015 Population Register Centre
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+
+
+    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    </bean>
+    <context:property-placeholder location="file:///opt/metadata-server-properties/metadata-server.properties" ignore-resource-not-found="false" properties-ref="defaultProps" />
+
+
+
+    <context:annotation-config />
+    <context:component-scan base-package="fi.vm.kapa.identification.metadata.service" />
+    <context:component-scan base-package="fi.vm.kapa.identification.metadata.rest" />
+    <context:component-scan base-package="fi.vm.kapa.identification.metadata.dao" />
+    <context:component-scan base-package="fi.vm.kapa.identification.metadata.background" />
+    <task:scheduled-tasks scheduler="metadataScheduler">
+        <task:scheduled ref="metadataFilesGenerator" method="regenerate" cron="0 0 * * * ?" />
+    </task:scheduled-tasks>
+    <task:scheduler id="metadataScheduler" pool-size="50" />
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="metadataDAO" />
+        <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml" />
+        <property name="persistenceUnitManager">
+            <bean class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+                <property name="defaultDataSource" ref="dataSource" />
+            </bean>
+        </property>
+        <property name="packagesToScan" value="fi.vm.kapa.identification.metadata.model" />
+    </bean>
+
+    <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="${jdbc.db.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaDialect" ref="jpaDialect" />
+    </bean>
+
+
+</beans>
