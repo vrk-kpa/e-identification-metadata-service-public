@@ -97,23 +97,6 @@ public class MetadataResource {
         }
     }
 
-    @POST
-    @Path("/add")
-    @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-    @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-    public Response addNewMetadata(MetadataDTO metadataDTO) {
-        Response response;
-        logger.debug("Received new metadata to be added, entity ID: {}", metadataDTO.getEntityId());
-        try {
-            metadataService.addMetadata(createFromDTO(metadataDTO));
-            response = Response.ok().build();
-        } catch (Exception e) {
-            logger.error("Error creating new metadata to database", e);
-            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-        return response;
-    }
-
     private MetadataDTO createDTO(Metadata metadata) {
         if (metadata == null) {
             return null;
@@ -134,39 +117,6 @@ public class MetadataResource {
             dto.setVtjVerificationRequired(metadata.isVtjVerificationRequired());
 
             return dto;
-        }
-    }
-
-    private Metadata createFromDTO(MetadataDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        else {
-            Metadata metadata = new Metadata();
-
-            metadata.setName(dto.getName());
-            metadata.setEntityid(dto.getEntityId());
-            metadata.setDnsName(dto.getDnsName());
-            metadata.setProviderType(dto.getProviderType());
-            metadata.setLevelOfAssurance(dto.getLevelOfAssurance());
-            metadata.setSessionProfile(dto.getSessionProfile());
-            metadata.setAttributeLevelOfAssurance(dto.getAttributeLevelOfAssurance());
-            metadata.setPubKey(dto.getPubKey());
-            metadata.setAcsAddress(dto.getAcsAddress());
-            metadata.setSloAddress(dto.getSloAddress());
-            metadata.setUserAttributes(dto.getUserAttributes());
-            metadata.setServiceName_fi(dto.getDisplayName().getFi());
-            metadata.setServiceName_sv(dto.getDisplayName().getSv());
-            metadata.setServiceName_en(dto.getDisplayName().getEn());
-            metadata.setOrganizationName_fi(dto.getOrganizationName().getFi());
-            metadata.setOrganizationName_sv(dto.getOrganizationName().getSv());
-            metadata.setOrganizationName_en(dto.getOrganizationName().getEn());
-            metadata.setAdministrativeContact_name(dto.getAdministrativeContact().getName());
-            metadata.setAdministrativeContact_email(dto.getAdministrativeContact().getEmail());
-            metadata.setTechnicalContact_name(dto.getTechnicalContact().getName());
-            metadata.setTechnicalContact_email(dto.getTechnicalContact().getEmail());
-            metadata.setVtjVerificationRequired(dto.isVtjVerificationRequired());
-            return metadata;
         }
     }
 }
