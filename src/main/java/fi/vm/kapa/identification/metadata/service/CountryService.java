@@ -22,9 +22,8 @@
  */
 package fi.vm.kapa.identification.metadata.service;
 
-import fi.vm.kapa.identification.metadata.dao.MetadataDAO;
-import fi.vm.kapa.identification.metadata.model.Metadata;
-import fi.vm.kapa.identification.type.ProviderType;
+import fi.vm.kapa.identification.metadata.dao.CountryDAO;
+import fi.vm.kapa.identification.metadata.model.Country;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,34 +34,14 @@ import java.util.List;
 
 @Service
 @Transactional
-public class MetadataService {
+public class CountryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MetadataService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CountryService.class);
 
     @Autowired
-    private MetadataDAO metadataDAO;
+    private CountryDAO countryDAO;
 
-    public List<Metadata> getMetadataByType(ProviderType type) {
-        List<Metadata> queryResults;
-
-        if (type != null) {
-            queryResults = metadataDAO.getMetadataByType(type);
-        }
-        else {
-            queryResults = metadataDAO.getAllMetadata();
-        }
-
-        return queryResults;
-    }
-
-    public Metadata getMetadataByEntityId(String entityId) {
-        List<Metadata> queryResults = metadataDAO.getMetadataByEntityId(entityId);
-        if (queryResults.isEmpty()) {
-            logger.debug("Metadata search with entity ID {} returned an empty result", entityId);
-            return null;
-        }
-        else {
-            return queryResults.get(0);
-        }
+    public List<Country> getCountries() {
+        return countryDAO.getAllCountries();
     }
 }

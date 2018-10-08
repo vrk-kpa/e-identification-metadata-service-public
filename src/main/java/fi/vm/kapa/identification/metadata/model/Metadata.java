@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import fi.vm.kapa.identification.type.EidasSupport;
 import fi.vm.kapa.identification.type.ProviderType;
 import fi.vm.kapa.identification.type.SessionProfile;
 
@@ -122,6 +123,13 @@ public class Metadata implements Serializable {
 
     @Column(name = "vtjVerificationRequired", nullable = true)
     private boolean vtjVerificationRequired;
+
+    @Column(name = "eidasContactAddress", nullable = true)
+    private String eidasContactAddress;
+
+    @Column(name = "eidasSupport", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EidasSupport eidasSupport;
 
     // Setters and getters
 
@@ -313,5 +321,21 @@ public class Metadata implements Serializable {
 
     public void setVtjVerificationRequired(boolean vtjVerificationRequired) {
         this.vtjVerificationRequired = vtjVerificationRequired;
+    }
+
+    public String getEidasContactAddress() {
+        return eidasContactAddress;
+    }
+
+    public void setEidasContactAddress(String eidasContactAddress) {
+        this.eidasContactAddress = eidasContactAddress;
+    }
+
+    public EidasSupport getEidasSupport() {
+        return eidasSupport;
+    }
+
+    public void setEidasSupport(EidasSupport eidasSupport) {
+        this.eidasSupport = eidasSupport;
     }
 }

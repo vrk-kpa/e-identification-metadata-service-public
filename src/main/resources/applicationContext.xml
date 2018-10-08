@@ -46,15 +46,11 @@
     <context:component-scan base-package="fi.vm.kapa.identification.metadata.rest" />
     <context:component-scan base-package="fi.vm.kapa.identification.metadata.dao" />
     <context:component-scan base-package="fi.vm.kapa.identification.metadata.background" />
-    <task:scheduled-tasks scheduler="metadataScheduler">
-        <task:scheduled ref="metadataFilesGenerator" method="regenerate" cron="0 0 * * * ?" />
-    </task:scheduled-tasks>
-    <task:scheduler id="metadataScheduler" pool-size="50" />
 
     <tx:annotation-driven transaction-manager="transactionManager" />
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="metadataDAO" />
+        <property name="persistenceUnitName" value="metadataPU" />
         <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml" />
         <property name="persistenceUnitManager">
             <bean class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">

@@ -26,20 +26,18 @@ import fi.vm.kapa.identification.dto.MetadataDTO;
 import fi.vm.kapa.identification.dto.MultiLanguageDTO;
 import fi.vm.kapa.identification.metadata.model.Metadata;
 import fi.vm.kapa.identification.metadata.service.MetadataService;
+import fi.vm.kapa.identification.type.EidasSupport;
 import fi.vm.kapa.identification.type.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.inject.Named;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,17 +45,9 @@ import java.util.stream.Collectors;
 public class MetadataResource {
 
     private static final Logger logger = LoggerFactory.getLogger(MetadataResource.class);
-    private static final int HTTP_OK = 200;
 
     @Autowired
     private MetadataService metadataService;
-
-    @Autowired
-    @Named("defaultProps")
-    private Properties defaultProps;
-
-    @Value("${aar.base.url}")
-    private String aarBaseUrl;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -67,7 +57,10 @@ public class MetadataResource {
         try {
             ProviderType type = (providerType != null ? ProviderType.valueOf(providerType) : null);
             List<Metadata> queryResults = metadataService.getMetadataByType(type);
-            List<MetadataDTO> results = queryResults.stream().map(this::createDTO).collect(Collectors.toList());
+            List<MetadataDTO> results = queryResults.stream()
+                    .map(result ->
+                            createDTO(result, ProviderType.SERVICE_PROVIDER.equals(type))
+                    ).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(results)) {
                 response = Response.ok().entity(results).build();
             } else {
@@ -88,7 +81,7 @@ public class MetadataResource {
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     public MetadataDTO getMetadataByEntityId(@PathParam("entityId") String entityId) {
         logger.debug("Got request for metadata query by entity ID: {}", entityId);
-        MetadataDTO metadataDTO = createDTO(metadataService.getMetadataByEntityId(entityId));
+        MetadataDTO metadataDTO = createDTO(metadataService.getMetadataByEntityId(entityId), false);
         if (metadataDTO == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -97,7 +90,7 @@ public class MetadataResource {
         }
     }
 
-    private MetadataDTO createDTO(Metadata metadata) {
+    private MetadataDTO createDTO(Metadata metadata, boolean addEidasContactAddress) {
         if (metadata == null) {
             return null;
         }
@@ -115,6 +108,13 @@ public class MetadataResource {
                     metadata.getServiceName_en(),
                     metadata.getServiceName_sv()));
             dto.setVtjVerificationRequired(metadata.isVtjVerificationRequired());
+            dto.setEidasSupport(metadata.getEidasSupport());
+            if ( addEidasContactAddress ) {
+                dto.setEidasContactAddress(metadata.getEidasContactAddress());
+            }
+            else {
+                dto.setEidasContactAddress("");
+            }
 
             return dto;
         }

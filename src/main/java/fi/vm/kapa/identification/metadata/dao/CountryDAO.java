@@ -20,10 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package fi.vm.kapa.identification.metadata.dao;
 
-import fi.vm.kapa.identification.metadata.model.Metadata;
-import fi.vm.kapa.identification.type.ProviderType;
+import fi.vm.kapa.identification.metadata.model.Country;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -32,31 +32,16 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-public class MetadataDAO {
+public class CountryDAO {
 
     @PersistenceContext(unitName = "metadataPU")
     private EntityManager entityManager;
 
-    public List<Metadata> getAllMetadata() {
-        TypedQuery<Metadata> query = entityManager
-                .createNamedQuery("Metadata.getAll", Metadata.class);
+    public List<Country> getAllCountries() {
+        TypedQuery<Country> query = entityManager
+                .createNamedQuery("Country.getAll", Country.class);
 
         return query.getResultList();
     }
 
-    public List<Metadata> getMetadataByType(ProviderType providerType) {
-        TypedQuery<Metadata> query = entityManager
-                .createNamedQuery("Metadata.searchByProviderType", Metadata.class)
-                .setParameter("providerType", providerType.toString());
-
-        return query.getResultList();
-    }
-
-    public List<Metadata> getMetadataByEntityId(String entityId) {
-        TypedQuery<Metadata> query = entityManager
-                .createNamedQuery("Metadata.searchByEntityId", Metadata.class)
-                .setParameter("entityId", entityId);
-
-        return query.getResultList();
-    }
 }
