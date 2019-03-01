@@ -57,8 +57,8 @@ public class Country implements Serializable {
     @Column(name = "displayName_en", nullable = false)
     private String displayName_en;
 
-    @Column(name = "levelOfAssurance", nullable = false)
-    private String levelOfAssurance;
+    @Column(name = "authProviderEntityId", nullable = false)
+    private String authProviderEntityId;
 
     @Column(name = "eidasLoginContext", nullable = false)
     private String eidasLoginContext;
@@ -119,12 +119,12 @@ public class Country implements Serializable {
         this.displayName_en = displayName_en;
     }
 
-    public String getLevelOfAssurance() {
-        return levelOfAssurance;
+    public String getAuthProviderEntityId() {
+        return authProviderEntityId;
     }
 
-    public void setLevelOfAssurance(String levelOfAssurance) {
-        this.levelOfAssurance = levelOfAssurance;
+    public void setAuthProviderEntityId(String authProviderEntityId) {
+        this.authProviderEntityId = authProviderEntityId;
     }
 
     public String getEidasLoginContext() {

@@ -36,7 +36,6 @@
         <gson.version>2.3.1</gson.version>
         <hibernate.core.version>4.3.8.Final</hibernate.core.version>
         <hibernate.jpa.version>1.0.0.Final</hibernate.jpa.version>
-        <jax-rs.version>2.0.1</jax-rs.version>
         <jackson.version>2.5.0</jackson.version>
         <jersey.version>2.22.1</jersey.version>
         <jersey.spring.version>2.22.1</jersey.spring.version>
@@ -62,14 +61,6 @@
             <groupId>fi.vm.kapa.identification</groupId>
             <artifactId>shared</artifactId>
             <version>${kapa.shared.version}</version>
-        </dependency>
-
-        <!-- Javax deps -->
-
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>${jax-rs.version}</version>
         </dependency>
 
         <!-- Spring deps -->

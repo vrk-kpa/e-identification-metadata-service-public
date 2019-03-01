@@ -78,7 +78,7 @@ public class CountryResource {
             dto.setDisplayName(new MultiLanguageDTO(country.getDisplayName_fi(),
                     country.getDisplayName_en(),
                     country.getDisplayName_sv()));
-            dto.setLevelOfAssurance(country.getLevelOfAssurance());
+            dto.setAuthProviderEntityId(country.getAuthProviderEntityId());
             dto.setEidasLoginContext(country.getEidasLoginContext());
             dto.setSortOrder(country.getSortOrder());
             dto.setEnabled(country.isEnabled());

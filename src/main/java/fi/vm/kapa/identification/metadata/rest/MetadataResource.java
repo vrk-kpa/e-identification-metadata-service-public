@@ -24,9 +24,10 @@ package fi.vm.kapa.identification.metadata.rest;
 
 import fi.vm.kapa.identification.dto.MetadataDTO;
 import fi.vm.kapa.identification.dto.MultiLanguageDTO;
+import fi.vm.kapa.identification.metadata.model.LoginContext;
 import fi.vm.kapa.identification.metadata.model.Metadata;
+import fi.vm.kapa.identification.metadata.service.LoginContextService;
 import fi.vm.kapa.identification.metadata.service.MetadataService;
-import fi.vm.kapa.identification.type.EidasSupport;
 import fi.vm.kapa.identification.type.ProviderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,9 @@ public class MetadataResource {
     @Autowired
     private MetadataService metadataService;
 
+    @Autowired
+    private LoginContextService loginContextService;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     public Response getMetadataByType(@QueryParam("type") String providerType) {
@@ -59,7 +63,7 @@ public class MetadataResource {
             List<Metadata> queryResults = metadataService.getMetadataByType(type);
             List<MetadataDTO> results = queryResults.stream()
                     .map(result ->
-                            createDTO(result, ProviderType.SERVICE_PROVIDER.equals(type))
+                            createDTO(result, type)
                     ).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(results)) {
                 response = Response.ok().entity(results).build();
@@ -81,7 +85,7 @@ public class MetadataResource {
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     public MetadataDTO getMetadataByEntityId(@PathParam("entityId") String entityId) {
         logger.debug("Got request for metadata query by entity ID: {}", entityId);
-        MetadataDTO metadataDTO = createDTO(metadataService.getMetadataByEntityId(entityId), false);
+        MetadataDTO metadataDTO = createDTO(metadataService.getMetadataByEntityId(entityId), null);
         if (metadataDTO == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -90,7 +94,7 @@ public class MetadataResource {
         }
     }
 
-    private MetadataDTO createDTO(Metadata metadata, boolean addEidasContactAddress) {
+    private MetadataDTO createDTO(Metadata metadata, ProviderType type) {
         if (metadata == null) {
             return null;
         }
@@ -109,11 +113,17 @@ public class MetadataResource {
                     metadata.getServiceName_sv()));
             dto.setVtjVerificationRequired(metadata.isVtjVerificationRequired());
             dto.setEidasSupport(metadata.getEidasSupport());
-            if ( addEidasContactAddress ) {
+            if ( ProviderType.SERVICE_PROVIDER.equals(type) ) {
                 dto.setEidasContactAddress(metadata.getEidasContactAddress());
             }
             else {
                 dto.setEidasContactAddress("");
+            }
+            if ( ProviderType.AUTHENTICATION_PROVIDER.equals(type) ) {
+                LoginContext loginContext = loginContextService.getLoginContext(metadata.getEntityid());
+                if ( loginContext != null ) {
+                    dto.setLoginContext(loginContext.getPath());
+                }
             }
 
             return dto;
