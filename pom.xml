@@ -45,7 +45,7 @@
         <spring.version>4.1.4.RELEASE</spring.version>
         <servlet.version>3.0.1</servlet.version>
         <slf4j.version>1.7.10</slf4j.version>
-        <org.apache.httpcomponents.version>4.3.6</org.apache.httpcomponents.version>
+        <org.apache.httpcomponents.version>4.5.13</org.apache.httpcomponents.version>
         <docker.image.tag></docker.image.tag>
         <docker.image.prefix>e-identification-docker-virtual.vrk-artifactory-01.eden.csc.fi</docker.image.prefix>
         <spotify-docker.version>0.3.1</spotify-docker.version>
